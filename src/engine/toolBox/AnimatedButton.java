@@ -29,13 +29,6 @@ public class AnimatedButton implements AdvancedInteractableObject {
         this.animation = new Animation(path, 0.04, 8, 0, true);
     }
 
-    public void paint(DrawHelper draw) {
-
-        if(animation.getAnimation() == null)
-            draw.drawImage(animation.getFirstSprite(), x, y, width, height);
-        else draw.drawImage(animation.getAnimation(), x, y, width, height);
-    }
-
     @Override
     public void mouseMoved(MouseEvent e) {
 
@@ -86,6 +79,9 @@ public class AnimatedButton implements AdvancedInteractableObject {
     @Override
     public void draw(DrawHelper draw) {
 
+        if(animation.getAnimation() == null)
+            draw.drawImage(animation.getFirstSprite(), x, y, width, height);
+        else draw.drawImage(animation.getAnimation(), x, y, width, height);
     }
 
     public boolean isClicked() {

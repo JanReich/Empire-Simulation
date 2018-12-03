@@ -164,17 +164,6 @@ import java.awt.image.BufferedImage;
             }
         }
 
-            //Button zeichnen
-        public void drawButton(Button button) {
-
-            if(g2d != null && button != null) button.paint(this);
-        }
-
-        public void drawButton(AnimatedButton button) {
-
-            if(g2d != null && button != null) button.paint(this);
-        }
-
             //Fonts
         public Font createFont(int fontType, int fontSize) {
 
