@@ -249,9 +249,8 @@ import java.awt.image.BufferedImage;
                 overlay = null;
             }
 
-            String[] size = getSize().split("x");
-            movingX = e.getX() - (Integer.parseInt(size[0]) / 2 * gameField.getFieldSquareSize()) ;
-            movingY = e.getY() - (Integer.parseInt(size[1]) / 2 * gameField.getFieldSquareSize()) ;
+            movingX = e.getX();
+            movingY = e.getY();
         }
 
         @Override
@@ -259,9 +258,8 @@ import java.awt.image.BufferedImage;
 
             if(moving) {
 
-                String[] size = getSize().split("x");
-                movingX = e.getX() - (Integer.parseInt(size[0]) / 2 * gameField.getFieldSquareSize()) ;
-                movingY = e.getY() - (Integer.parseInt(size[1]) / 2 * gameField.getFieldSquareSize()) ;
+                movingX = e.getX();
+                movingY = e.getY();
             }
         }
 

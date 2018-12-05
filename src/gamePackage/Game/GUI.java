@@ -105,8 +105,10 @@ import java.text.DecimalFormat;
             draw.setColour(new Color(36, 45, 51));
             draw.setFont(new Font("Roboto", Font.BOLD, 14));
 
-            int currentProgress = player.getCurrentProgress();
-            double progress = player.getNextLevelXP();
+            //int currentProgress = player.getCurrentProgress();
+            int currentProgress = 1;
+            //double progress = player.getNextLevelXP();
+            double progress = 1;
             if(progress != -1) {
 
                 progress = (double) (this.player.getXp() - currentProgress) /  (progress - currentProgress);
