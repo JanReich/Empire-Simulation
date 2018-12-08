@@ -47,6 +47,7 @@ import java.awt.*;
             gui = new GUI(display, connector, gameField, player, controller);
 
             controller.setGui(gui);
+            controller.setPlayer(player);
             controller.setQuestbook(questbook);
             controller.setGameField(gameField);
 

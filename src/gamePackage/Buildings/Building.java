@@ -149,18 +149,18 @@ import java.awt.image.BufferedImage;
 
             } else if(worker > 0) {
 
-                upgradable = generateUpgradeCost(type, false, level);
+                upgradable = generateUpgradeCost(type, true, level);
             }
 
             if(type.equalsIgnoreCase("House")) {
 
-                connector.executeStatement("SELECT Livingroom FROM JansEmpire_StaticBuildings WHERE Level = '" + level + "' OR Level = '" + (level - 1) + "';");
+                connector.executeStatement("SELECT Livingroom FROM JansEmpire_StaticBuildings WHERE (Level = '" + level + "' OR Level = '" + (level - 1) + "') AND Type = 'House' ORDER BY Livingroom ;");
                 gameField.getPlayer().deposit(0, 0, 0, 0, (Integer.parseInt(connector.getCurrentQueryResult().getData()[1][0]) - Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0])));
             }
 
             else if(type.equalsIgnoreCase("Warehouse")) {
 
-                connector.executeStatement("SELECT Storage FROM JansEmpire_StaticBuildings WHERE Level = '" + level + "' OR Level = '" + (level - 1) + "';");
+                connector.executeStatement("SELECT StorageAmount FROM JansEmpire_StaticBuildings WHERE (Level = '" + level + "' OR Level = '" + (level - 1) + "') AND Type = 'Warehouse' ORDER BY StorageAmount ;");
                 gameField.getPlayer().addStorage(Integer.parseInt(connector.getCurrentQueryResult().getData()[1][0]) - Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]));
             }
         }

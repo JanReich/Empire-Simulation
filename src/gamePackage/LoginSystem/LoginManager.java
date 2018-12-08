@@ -100,7 +100,7 @@ import gamePackage.JFrameController;
 
 
                     connector.executeStatement("" +
-                            "SELECT StorageAmount From JansEmpire_Castle WHERE Level = '1'");
+                            "SELECT StorageAmount From JansEmpire_StaticBuildings WHERE Level = '1' AND Type = 'Castle';");
 
                     int startStorage = Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]);
 

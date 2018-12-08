@@ -58,6 +58,7 @@ import gamePackage.LoginSystem.LoginManager;
             removeLoginManager();
             currentState = 1;
 
-            new GameController(connector, display, mail);
+            GameController gameController = new GameController(connector, display, mail);
+            display.getActivePanel().drawObjectOnPanel(gameController);
         }
     }

@@ -2,9 +2,14 @@ package gamePackage;
 
 import engine.abitur.datenbanken.mysql.DatabaseConnector;
 import engine.graphics.Display;
+import engine.graphics.interfaces.BasicInteractableObject;
+import engine.toolBox.DrawHelper;
 import gamePackage.Game.*;
 
-    public class GameController {
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
+    public class GameController implements BasicInteractableObject {
 
                 //Attribute
 
@@ -12,6 +17,7 @@ import gamePackage.Game.*;
             private Display display;
 
             private GUI gui;
+            private Player player;
             private Questbook questbook;
             private GameField gameField;
             private DatabaseConnector connector;
@@ -46,6 +52,45 @@ import gamePackage.Game.*;
             questbook.refresh();
         }
 
+        @Override
+        public void keyPressed(KeyEvent e) {
+
+                //Refresh
+            if(e.getKeyCode() == KeyEvent.VK_R) {
+
+                player.updateClientData();
+                gameField.refresh();
+                questbook.refresh();
+                player.updateMySQLData();
+            }
+
+                //Cheat
+            if(e.getKeyCode() == KeyEvent.VK_C) {
+
+                player.deposit(10000, 10000, 10000, 100000, 0);
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent event) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent event) {
+
+        }
+
+        @Override
+        public void update(double delta) {
+
+        }
+
+        @Override
+        public void draw(DrawHelper draw) {
+
+        }
+
         public GUI getGui() {
 
             return gui;
@@ -58,6 +103,10 @@ import gamePackage.Game.*;
 
         public void setGui(GUI gui) {
             this.gui = gui;
+        }
+
+        public void setPlayer(Player player) {
+            this.player = player;
         }
 
         public void setQuestbook(Questbook questbook) {

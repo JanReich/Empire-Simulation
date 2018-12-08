@@ -106,7 +106,7 @@ public class SpriteSheet {
 
                 for (int i = 0; i < amountOfFrames; i++) {
 
-                    subImages[i][0] = ImageHelper.getImage(ref + "/" + image + i + "ShopItemKaserneMax.png");
+                    subImages[i][0] = ImageHelper.getImage(ref + "/" + image + i + ".png");
                 }
             }
         }

@@ -191,14 +191,14 @@ import java.util.ArrayList;
 
             else if(connector.getCurrentQueryResult().getData()[0][0].equalsIgnoreCase("Warehouse")) {
 
-                connector.executeStatement("SELECT Storage FROM JansEmpire_StaticBuildings WHERE Level = '" + connector.getCurrentQueryResult().getData()[0][1] + "' AND Type = 'Warehouse';");
+                connector.executeStatement("SELECT StorageAmount FROM JansEmpire_StaticBuildings WHERE Level = '" + connector.getCurrentQueryResult().getData()[0][1] + "' AND Type = 'Warehouse';");
                 player.addStorage(- Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]));
             }
 
             if(building.isNeedWorker()) {
 
                 connector.executeStatement("" +
-                        "SELECT WorkerAmount FROM JansEmpire_StaticBuildings WHERE Level = '" + level.getData()[0][1] + "' AND Type = '" + connector.getCurrentQueryResult().getData()[0][0] + "';");
+                        "SELECT WorkerAmount FROM JansEmpire_StaticBuildings WHERE Level = '" + level.getData()[0][1] + "' AND Type = '" + level.getData()[0][0] + "';");
 
                 player.deposit(0, 0, 0, 0, Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]));
             }

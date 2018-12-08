@@ -158,6 +158,11 @@ import java.text.DecimalFormat;
                 draw.setFont(new Font("Roboto", Font.PLAIN, 12));
                 draw.drawImage(militaryOverlay, 535, 46, 200 , 220);
             }
+
+            draw.setColour(Color.WHITE);
+            draw.setFont(new Font("Roboto", Font.BOLD, 14));
+            draw.drawString("\'R\' - Refresh", 840, 30);
+            draw.drawString("\'C\' - Cheat Ressources", 840, 50);
         }
 
         @Override

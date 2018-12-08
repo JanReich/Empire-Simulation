@@ -260,7 +260,7 @@ import java.util.ArrayList;
 
                         draw.setColour(Color.BLACK);
                         final DecimalFormat separator = new java.text.DecimalFormat("##,###");
-                        if(!inActive) draw.drawString(separator.format(stoneCost) + "", x + (88 * index) + 43, y + 101);
+                        if(!inActive) draw.drawString(separator.format(stoneCost) + "", x + (88 * index) + 43, y + 103);
                         if(!inActive) draw.drawString(separator.format(woodCost) + "", x + (88 * index) + 43, y + 118);
                     }
 
