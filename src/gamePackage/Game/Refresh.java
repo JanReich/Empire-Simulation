@@ -50,7 +50,7 @@ import java.util.TimerTask;
                 if(result.getData()[row][0].equalsIgnoreCase("Woodcutter")) {
 
                     connector.executeStatement("" +
-                            "SELECT WoodProduction FROM JansEmpire_WoodcutterHouseing WHERE Level = '" + result.getData()[row][1] + "';");
+                            "SELECT WoodProduction FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[row][1] + "' AND Type = '" + result.getData()[row][0] + "';");
 
                     production = connector.getCurrentQueryResult();
                     woodProduction += Integer.parseInt(production.getData()[0][0]);
@@ -59,7 +59,7 @@ import java.util.TimerTask;
                 else if(result.getData()[row][0].equalsIgnoreCase("Stonemason")) {
 
                     connector.executeStatement("" +
-                            "SELECT StoneProduction FROM JansEmpire_Stonemason WHERE Level = '" + result.getData()[row][1] + "';");
+                            "SELECT StoneProduction FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[row][1] + "' AND Type = '" + result.getData()[row][0] + "';");
 
                     production = connector.getCurrentQueryResult();
                     stoneProduction += Integer.parseInt(production.getData()[0][0]);
@@ -68,7 +68,7 @@ import java.util.TimerTask;
                 else if(result.getData()[row][0].equalsIgnoreCase("Farmhouse")) {
 
                     connector.executeStatement("" +
-                            "SELECT WheatProduction FROM JansEmpire_Farmhouse WHERE Level = '" + result.getData()[row][1] + "';");
+                            "SELECT WheatProduction FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[row][1] + "' AND Type = '" + result.getData()[row][0] + "';");
 
                     production = connector.getCurrentQueryResult();
                     wheatProduction += Integer.parseInt(production.getData()[0][0]);
@@ -77,7 +77,7 @@ import java.util.TimerTask;
                 else if(result.getData()[row][0].equalsIgnoreCase("Castle")) {
 
                     connector.executeStatement("" +
-                            "SELECT GoldProduction FROM JansEmpire_Castle WHERE Level = '" + result.getData()[row][1] + "';");
+                            "SELECT CoinProduction FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[row][1] + "' AND Type = '" + result.getData()[row][0] + "';");
 
                     production = connector.getCurrentQueryResult();
                     coinProduction += Integer.parseInt(production.getData()[0][0]);
@@ -86,7 +86,7 @@ import java.util.TimerTask;
                 else if(result.getData()[row][0].equalsIgnoreCase("Kaserne")) {
 
                     connector.executeStatement("" +
-                            "SELECT NeededGold FROM JansEmpire_Kaserne WHERE Level = '" + result.getData()[row][1] + "';");
+                            "SELECT NeededGold FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[row][1] + "' AND Type = '" + result.getData()[row][0] + "';");
 
                     production = connector.getCurrentQueryResult();
                     coinProduction -= Integer.parseInt(production.getData()[0][0]);
@@ -95,7 +95,7 @@ import java.util.TimerTask;
                 else if(result.getData()[row][0].equalsIgnoreCase("House")) {
 
                     connector.executeStatement("" +
-                            "SELECT Livingroom FROM JansEmpire_House WHERE Level = '" + result.getData()[row][1] + "';");
+                            "SELECT Livingroom FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[row][1] + "' AND Type = '" + result.getData()[row][0] + "';");
 
                     production = connector.getCurrentQueryResult();
                     population += Integer.parseInt(production.getData()[0][0]);
@@ -153,13 +153,14 @@ import java.util.TimerTask;
 
                     double scale = (double) diffSeconds / (double) 60;
                     System.out.println(scale + " Minuten sind seit der letzten aktualisierung vergangen!");
+                    scale = scale / (double) 60;
                     woodAmount = (long) ((double) woodProduction * (scale));
                     stoneAmount = (long) ((double) stoneProduction * (scale));
                     wheatAmount = (long) ((double) wheatProduction * (scale));
                     coinAmount = (long) ((double) coinProduction * (scale));
                 }
 
-                player.addGoods((int) woodAmount, (int) stoneAmount, (int) wheatAmount, (int) coinAmount, 0);
+                player.deposit((int) woodAmount, (int) stoneAmount, (int) wheatAmount, (int) coinAmount, 0);
                 return true;
             } else return false;
         }

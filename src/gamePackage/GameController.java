@@ -12,36 +12,28 @@ import gamePackage.Game.*;
             private Display display;
 
             private GUI gui;
-            private Player player;
-            private Refresh refresh;
             private Questbook questbook;
             private GameField gameField;
             private DatabaseConnector connector;
 
+            private LoadingScreen loadingScreen;
 
         public GameController(DatabaseConnector connector, Display display, String mail) {
 
             this.display = display;
             this.connector = connector;
 
-            init(mail);
+            loadingScreen = new LoadingScreen(connector, this, display, mail);
+            display.getActivePanel().drawObjectOnPanel(loadingScreen);
         }
 
-        private void init(String mail) {
+        public void init() {
 
-            player = new Player(connector, mail);
-            refresh = new Refresh(player);
-
-            questbook = new Questbook(display, connector, player,this);
-            gameField = new GameField(connector, refresh, display, player, this);
-            gui = new GUI(display, connector, gameField, player, this);
+            display.getActivePanel().removeObjectFromPanel(loadingScreen);
 
             display.getActivePanel().drawObjectOnPanel(gameField);
             display.getActivePanel().drawObjectOnPanel(gui, 100);
             display.getActivePanel().drawObjectOnPanel(questbook, 100);
-
-            //Worker worker = new Worker();
-            //display.getActivePanel().drawObjectOnPanel(worker, 110);
         }
 
         public void setBuildingmode(boolean active) {
@@ -62,5 +54,17 @@ import gamePackage.Game.*;
         public Questbook getQuestbook() {
 
             return questbook;
+        }
+
+        public void setGui(GUI gui) {
+            this.gui = gui;
+        }
+
+        public void setQuestbook(Questbook questbook) {
+            this.questbook = questbook;
+        }
+
+        public void setGameField(GameField gameField) {
+            this.gameField = gameField;
         }
     }

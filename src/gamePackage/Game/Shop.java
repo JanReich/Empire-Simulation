@@ -19,6 +19,7 @@ import java.util.ArrayList;
     public class Shop implements LiteInteractableObject {
 
                 //Attribute
+            private int shopPage = 0;
             private boolean  active;
             private int shopState = 0;
 
@@ -50,7 +51,7 @@ import java.util.ArrayList;
             }
 
             ShopItem item;
-            item = new ShopItem(this, connector, gameField, player,"images/Gui/Shop/ShopItemWoodcutter", "images/Buildings/Woodcutter/Woodcutter_St1",  "Woodcutter","3x3", 0, 0);
+            item = new ShopItem(this, connector, gameField, player,"images/Gui/Shop/ShopItemWoodcutter", "images/Buildings/Woodcutter/Woodcutter_St1",  "Woodcutter","3x3", 0, 0, 0);
             display.getActivePanel().drawObjectOnPanel(item, 30);
             items.add(item);
 
@@ -62,20 +63,20 @@ import java.util.ArrayList;
                 items.add(item);
             } else {
 
-                item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemWarehouse", "images/Buildings/Warehouse/Warehouse_St1", "Warehouse","5x4", 1, 0);
+                item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemWarehouse", "images/Buildings/Warehouse/Warehouse_St1", "Warehouse","5x4", 1, 0, 0);
                 display.getActivePanel().drawObjectOnPanel(item, 29);
                 items.add(item);
             }
 
-            item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemFarmhouse", "images/Buildings/Farmhouse/Farmhouse_St1", "Farmhouse","4x4", 2, 0);
+            item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemFarmhouse", "images/Buildings/Farmhouse/Farmhouse_St1", "Farmhouse","4x4", 2, 0, 0);
             display.getActivePanel().drawObjectOnPanel(item, 28);
             items.add(item);
 
-            item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemStonemason", "images/Buildings/Stonemason/Stonemason_St1", "Stonemason","3x3", 3, 0);
+            item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemStonemason", "images/Buildings/Stonemason/Stonemason_St1", "Stonemason","3x3", 3, 0, 0);
             display.getActivePanel().drawObjectOnPanel(item, 27);
             items.add(item);
 
-            item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemHouse", "images/Buildings/House/House_St1", "House","3x4", 4, 0);
+            item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemHouse", "images/Buildings/House/House_St1", "House","3x4", 4, 0, 0);
             display.getActivePanel().drawObjectOnPanel(item, 26);
             items.add(item);
 
@@ -87,12 +88,16 @@ import java.util.ArrayList;
                 items.add(item);
             } else {
 
-                item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemKaserne", "images/Buildings/Kaserne/Kaserne_St1", "Kaserne","5x5", 0, 1);
+                item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemKaserne", "images/Buildings/Kaserne/Kaserne_St1", "Kaserne","5x5", 0, 0, 1);
                 display.getActivePanel().drawObjectOnPanel(item, 29);
                 items.add(item);
             }
 
-            item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ItemShopGuardHouse", "images/Buildings/GuardHouse/GuardHouse_St1", "GuardHouse", "4x4", 1, 1);
+            item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ItemShopGuardHouse", "images/Buildings/GuardHouse/GuardHouse_St1", "GuardHouse", "4x4", 1, 0, 1);
+            display.getActivePanel().drawObjectOnPanel(item, 28);
+            items.add(item);
+
+            item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemStreet", "images/Buildings/PathTiles", "Path", "2x2", 0, 1, 0);
             display.getActivePanel().drawObjectOnPanel(item, 28);
             items.add(item);
         }
@@ -131,6 +136,19 @@ import java.util.ArrayList;
 
             if(e.getX() > 215 && e.getX() < 265 && e.getY() > 810 && e.getY() < 840 && active) shopState = 0;
             else if(e.getX() > 315 && e.getX() < 365 && e.getY() > 810 && e.getY() < 840 && active)  shopState = 1;
+
+            if(e.getX() > 740 && e.getX() < 760 && e.getY() > 905 && e.getY() < 940 && active) {
+
+                shopPage++;
+                for (ShopItem item : items)
+                    item.setShopPage(shopPage);
+            }
+            else if(e.getX() > 235 && e.getX() < 250 && e.getY() > 900 && e.getY() < 940 && active) {
+
+                shopPage--;
+                for (ShopItem item : items)
+                    item.setShopPage(shopPage);
+            }
         }
 
         @Override
@@ -163,11 +181,13 @@ import java.util.ArrayList;
                 private int y = 862;
                 private boolean inActive;
 
+                private int page;
                 private int state;
                 private int worker;
                 private int storage;
                 private int coinCost;
                 private int woodCost;
+                private int shopPage;
                 private int stoneCost;
                 private int wheatCost;
                 private int livingroom;
@@ -202,8 +222,9 @@ import java.util.ArrayList;
                 item = ImageHelper.getImage("res/" + shopPath + ".png");
             }
 
-            public ShopItem(Shop shop, DatabaseConnector connector, GameField gameField, Player player, String shopPath, String buildingPath, String type, String size, int index, int state) {
+            public ShopItem(Shop shop, DatabaseConnector connector, GameField gameField, Player player, String shopPath, String buildingPath, String type, String size, int index, int page, int state) {
 
+                this.page = page;
                 this.shop = shop;
                 this.type = type;
                 this.state = state;
@@ -217,58 +238,22 @@ import java.util.ArrayList;
                 building = ImageHelper.getImage("res/" + buildingPath + ".png");
                 priceItem = ImageHelper.getImage("res/images/Gui/Shop/PriceItem.png");
 
-                QueryResult result = null;
-                switch (type) {
-
-                    case "Woodcutter":
-                        connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost, WorkerAmount FROM JansEmpire_WoodcutterHouseing WHERE Level = '1';");
-                        result = connector.getCurrentQueryResult();
-                        break;
-                    case "Warehouse":
-                        connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost, WorkerAmount, Storage FROM JansEmpire_Warehouse WHERE Level = '1';");
-                        result = connector.getCurrentQueryResult();
-                        break;
-                    case "Farmhouse":
-                        connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost, WorkerAmount FROM JansEmpire_Farmhouse WHERE Level = '1';");
-                        result = connector.getCurrentQueryResult();
-                        break;
-                    case "Stonemason":
-                        connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost, WorkerAmount FROM JansEmpire_Stonemason WHERE Level = '1';");
-                        result = connector.getCurrentQueryResult();
-                        break;
-                    case "House":
-                        connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost, NeededFood, Livingroom FROM JansEmpire_House WHERE Level = '1';");
-                        result = connector.getCurrentQueryResult();
-                        break;
-                    case "Kaserne":
-                        connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost FROM JansEmpire_Kaserne WHERE Level = '1';");
-                        result = connector.getCurrentQueryResult();
-                        break;
-                    case "GuardHouse":
-                        connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost, WorkerAmount FROM JansEmpire_GuardHouse WHERE Level = '1';");
-                        result = connector.getCurrentQueryResult();
-                        break;
-                }
+                connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost, WorkerAmount, Livingroom, StorageAmount FROM JansEmpire_StaticBuildings WHERE Level = '1' AND Type = '" + type + "';");
+                QueryResult result = connector.getCurrentQueryResult();
 
                 woodCost = Integer.parseInt(result.getData()[0][0]);
                 coinCost = Integer.parseInt(result.getData()[0][3]);
                 stoneCost = Integer.parseInt(result.getData()[0][1]);
                 wheatCost = Integer.parseInt(result.getData()[0][2]);
-
-                if(result.getData()[0].length == 5) worker = Integer.parseInt(result.getData()[0][4]);
-                else worker = 0;
-
-                if(type.equalsIgnoreCase("House")) livingroom = Integer.parseInt(result.getData()[0][5]);
-                else livingroom = 0;
-
-                if(type.equalsIgnoreCase("Warehouse")) storage = Integer.parseInt(result.getData()[0][5]);
-                else storage = 0;
+                worker = Integer.parseInt(result.getData()[0][4]);
+                livingroom = Integer.parseInt(result.getData()[0][5]);
+                storage = Integer.parseInt(result.getData()[0][6]);
             }
 
             @Override
             public void draw(DrawHelper draw) {
 
-                if(state == shopState) {
+                if(state == shopState && page == shopPage) {
 
                     if (active) {
                         draw.drawImage(item, x + (88 * index), y, 93, 128);
@@ -319,7 +304,7 @@ import java.util.ArrayList;
             @Override
             public void mouseReleased(MouseEvent e) {
 
-                if(shopState == state && !inActive && !gameField.getController().getQuestbook().isActive()) {
+                if(shopState == state && !inActive && !gameField.getController().getQuestbook().isActive() && active && page == shopPage) {
 
                     if (e.getX() > x + (88 * index) && e.getX() < x + (88 * (index + 1)) && e.getY() > y && e.getY() < y + 128 && !buildMode) {
 
@@ -361,7 +346,7 @@ import java.util.ArrayList;
                                     case "House":
                                         House house = new House(connector, display, gameField, 1, Integer.parseInt(field[0]), Integer.parseInt(field[1]), Integer.parseInt(size[0]), Integer.parseInt(size[1]));
                                         gameField.build(house, Integer.parseInt(field[0]), Integer.parseInt(field[1]), Integer.parseInt(size[0]), Integer.parseInt(size[1]), woodCost, stoneCost, wheatCost, coinCost, worker);
-                                        player.addGoods(0, 0, 0, 0, livingroom);
+                                        player.deposit(0, 0, 0, 0, livingroom);
                                         controller.setBuildingmode(false);
                                         break;
                                     case "Kaserne":
@@ -402,6 +387,11 @@ import java.util.ArrayList;
             @Override
             public void update(double delta) {
 
+            }
+
+            public void setShopPage(int shopPage) {
+
+                this.shopPage = shopPage;
             }
         }
     }

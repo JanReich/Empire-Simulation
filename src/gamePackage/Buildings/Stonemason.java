@@ -16,10 +16,10 @@ import gamePackage.Game.GameField;
             super(connector, display, gameField, level, posX, posY, width, height);
 
             this.connector = connector;
-            this.database = "JansEmpire_Stonemason";
+            this.type = "Stonemason";
             loadImage();
 
-            upgradable = generateUpgradeCost(database, true, level);
+            upgradable = generateUpgradeCost(type, true, level);
         }
 
         @Override

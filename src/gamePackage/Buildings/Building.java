@@ -39,7 +39,7 @@ import java.awt.image.BufferedImage;
             protected BuildingOverlay overlay;
             protected DatabaseConnector connector;
 
-            protected String database;
+            protected String type;
             protected BufferedImage building;
 
         public Building(DatabaseConnector connector, Display display, GameField gameField, int level, int posX, int posY, int width, int height) {
@@ -99,7 +99,7 @@ import java.awt.image.BufferedImage;
                 loadImage();
 
                 connector.executeStatement("" +
-                        "SELECT Size FROM " + database + " WHERE Level = '" + level + "';" );
+                        "SELECT Size FROM JansEmpire_StaticBuildings WHERE Level = '" + level + "' AND Type = '" + type + "';" );
                 QueryResult size = connector.getCurrentQueryResult();
                 String[] position = size.getData()[0][0].split("x");
                 width = Integer.parseInt(position[0]);
@@ -119,7 +119,7 @@ import java.awt.image.BufferedImage;
                 loadImage();
 
                 connector.executeStatement("" +
-                        "SELECT Size FROM " + database + " WHERE Level = '" + level + "';" );
+                        "SELECT Size FROM JansEmpire_StaticBuildings WHERE Level = '" + level + "' AND Type = '" + type + "';" );
                 QueryResult size = connector.getCurrentQueryResult();
 
                 //Größe ändert sich nicht
@@ -140,27 +140,27 @@ import java.awt.image.BufferedImage;
         private void upgradeBuilding() {
 
             gameField.simulateBuild(posX, posY, width, height);
-            gameField.getPlayer().payGoods(woodCost, stoneCost, wheatCost, coinCost, worker);
+            gameField.getPlayer().payResources(woodCost, stoneCost, wheatCost, coinCost, worker);
             connector.executeStatement("UPDATE JansEmpire_Buildings SET Level = '" + level + "' WHERE Mail = '" + gameField.getPlayer().getMail() + "' AND Position = '" + getPosition() + "';");
 
             if(worker == 0) {
 
-                upgradable = generateUpgradeCost(database,false, level);
+                upgradable = generateUpgradeCost(type,false, level);
 
             } else if(worker > 0) {
 
-                upgradable = generateUpgradeCost(database, false, level);
+                upgradable = generateUpgradeCost(type, false, level);
             }
 
-            if(database.equalsIgnoreCase("JansEmpire_House")) {
+            if(type.equalsIgnoreCase("House")) {
 
-                connector.executeStatement("SELECT Livingroom FROM " + database + " WHERE Level = '" + level + "' OR Level = '" + (level - 1) + "';");
-                gameField.getPlayer().addGoods(0, 0, 0, 0, (Integer.parseInt(connector.getCurrentQueryResult().getData()[1][0]) - Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0])));
+                connector.executeStatement("SELECT Livingroom FROM JansEmpire_StaticBuildings WHERE Level = '" + level + "' OR Level = '" + (level - 1) + "';");
+                gameField.getPlayer().deposit(0, 0, 0, 0, (Integer.parseInt(connector.getCurrentQueryResult().getData()[1][0]) - Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0])));
             }
 
-            else if(database.equalsIgnoreCase("JansEmpire_Warehouse")) {
+            else if(type.equalsIgnoreCase("Warehouse")) {
 
-                connector.executeStatement("SELECT Storage FROM " + database + " WHERE Level = '" + level + "' OR Level = '" + (level - 1) + "';");
+                connector.executeStatement("SELECT Storage FROM JansEmpire_StaticBuildings WHERE Level = '" + level + "' OR Level = '" + (level - 1) + "';");
                 gameField.getPlayer().addStorage(Integer.parseInt(connector.getCurrentQueryResult().getData()[1][0]) - Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]));
             }
         }
@@ -175,21 +175,21 @@ import java.awt.image.BufferedImage;
          * Mit dieser Methode kann herzausgefunden werden, ob ein weiteres Upgrade verfügbar ist.
          * @param level
          * @param needWorker
-         * @param database
+         * @param type
          * @return
          */
-        public boolean generateUpgradeCost(String database, boolean needWorker, int level) {
+        public boolean generateUpgradeCost(String type, boolean needWorker, int level) {
 
-            this.database = database;
+            this.type = type;
             this.needWorker = needWorker;
-            connector.executeStatement("SELECT MAX(Level) FROM " + database);
+            connector.executeStatement("SELECT MAX(Level) FROM JansEmpire_StaticBuildings WHERE Type = '" + type + "';");
             QueryResult upgrades = connector.getCurrentQueryResult();
 
             if(needWorker) {
 
                 if(level < Integer.parseInt(upgrades.getData()[0][0])) {
 
-                    connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost, WorkerAmount FROM " + database + " WHERE Level = '" + (level + 1) + "';");
+                    connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost, WorkerAmount FROM JansEmpire_StaticBuildings WHERE Level = '" + (level + 1) + "'  AND Type = '" + type + "';");
 
                     QueryResult result = connector.getCurrentQueryResult();
                     worker = Integer.parseInt(result.getData()[0][4]);
@@ -203,7 +203,7 @@ import java.awt.image.BufferedImage;
 
                 if(level < Integer.parseInt(upgrades.getData()[0][0])) {
 
-                    connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost FROM " + database + " WHERE Level = '" + (level + 1) + "';");
+                    connector.executeStatement("SELECT WoodCost, StoneCost, WheatCost, CoinCost FROM JansEmpire_StaticBuildings WHERE Level = '" + (level + 1) + "' AND Type = '" + type + "';");
 
                     QueryResult result = connector.getCurrentQueryResult();
                     worker = 0;
@@ -297,7 +297,7 @@ import java.awt.image.BufferedImage;
 
         public boolean isDestroyable() {
 
-            if(database.equalsIgnoreCase("JansEmpire_Castle")) return false;
+            if(type.equalsIgnoreCase("Castle")) return false;
             else return true;
         }
 
@@ -336,9 +336,9 @@ import java.awt.image.BufferedImage;
             return posX + "-" + posY;
         }
 
-        public String getDatabase() {
+        public String getType() {
 
-            return database;
+            return type;
         }
 
         public boolean isNeedWorker() {

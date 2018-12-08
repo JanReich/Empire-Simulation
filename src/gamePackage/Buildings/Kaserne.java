@@ -16,10 +16,10 @@ import gamePackage.Game.GameField;
             super(connector, display, gameField, level, posX, posY, width, height);
 
             this.connector = connector;
-            this.database = "JansEmpire_Kaserne";
+            this.type = "Kaserne";
             loadImage();
 
-            upgradable = generateUpgradeCost(database, false, level);
+            upgradable = generateUpgradeCost(type, false, level);
         }
 
         @Override

@@ -428,7 +428,7 @@ import java.util.ArrayList;
                             }
                         }
                         player.addXP(xp);
-                        player.addGoods(wood, stone, wheat, coin, worker);
+                        player.deposit(wood, stone, wheat, coin, worker);
                         close();
 
                         connector.executeStatement("" +
@@ -450,7 +450,7 @@ import java.util.ArrayList;
 
                         if(player.checkGoods(0, 0, 0, amount, 0)) {
 
-                            player.payGoods(0, 0, 0, amount, 0);
+                            player.payResources(0, 0, 0, amount, 0);
                             amountReady = amount;
 
                             connector.executeStatement("" +
@@ -460,7 +460,7 @@ import java.util.ArrayList;
 
                         if(player.checkGoods(0, 0, amount, 0, 0)) {
 
-                            player.payGoods(0, 0, amount, 0, 0);
+                            player.payResources(0, 0, amount, 0, 0);
                             amountReady = amount;
 
                             connector.executeStatement("" +
@@ -470,7 +470,7 @@ import java.util.ArrayList;
 
                         if(player.checkGoods(amount, 0, 0, 0, 0)) {
 
-                            player.payGoods(amount, 0, 0, 0, 0);
+                            player.payResources(amount, 0, 0, 0, 0);
                             amountReady = amount;
 
                             connector.executeStatement("" +
@@ -480,7 +480,7 @@ import java.util.ArrayList;
 
                         if(player.checkGoods(0, amount, 0, 0, 0)) {
 
-                            player.payGoods(0, amount, 0, 0, 0);
+                            player.payResources(0, amount, 0, 0, 0);
                             amountReady = amount;
 
                             connector.executeStatement("" +

@@ -11,6 +11,7 @@ import gamePackage.Buildings.*;
 import gamePackage.GameController;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
     public class GameField implements GraphicalObject {
@@ -28,10 +29,13 @@ import java.util.ArrayList;
             private Display display;
             private Refresh refresh;
             private String[][] fields;
-            private SpriteSheet grassTile;
+            private SpriteSheet waterTile;
             private GameController controller;
             private DatabaseConnector connector;
             private ArrayList<Building> buildings;
+
+            private BufferedImage boat;
+            private BufferedImage steg;
 
         public GameField(DatabaseConnector connector, Refresh refresh, Display display, Player player, GameController controller) {
 
@@ -52,7 +56,9 @@ import java.util.ArrayList;
 
             loadBuildings();
 
-            grassTile = new SpriteSheet(ImageHelper.getImage("res/images/Environment/grassTile.png"), 4, 4, true);
+            boat = ImageHelper.getImage("res/images/Environment/Boat.png");
+            steg = ImageHelper.getImage("res/images/Environment/steg.png");
+            waterTile = new SpriteSheet(ImageHelper.getImage("res/images/Environment/waterTile.png"), 4, 4, true);
         }
 
         private void loadBuildings() {
@@ -74,7 +80,7 @@ import java.util.ArrayList;
                     case "Woodcutter":
 
                         connector.executeStatement("" +
-                                "SELECT Size, WorkerAmount, WoodProduction FROM JansEmpire_WoodcutterHouseing WHERE Level = '" + result.getData()[i][1] + "';");
+                                "SELECT Size, WorkerAmount, WoodProduction FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[i][1] + "' AND Type = '" + result.getData()[i][0] + "';");
 
                         buildingData = connector.getCurrentQueryResult();
                         position = result.getData()[i][2].split("-");
@@ -86,7 +92,7 @@ import java.util.ArrayList;
                     case "Warehouse":
 
                         connector.executeStatement("" +
-                                "SELECT Size, WorkerAmount FROM JansEmpire_Warehouse WHERE Level = '" + result.getData()[i][1] + "';");
+                                "SELECT Size, WorkerAmount FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[i][1] + "' AND Type = '" + result.getData()[i][0] + "';");
 
                         buildingData = connector.getCurrentQueryResult();
                         position = result.getData()[i][2].split("-");
@@ -98,7 +104,7 @@ import java.util.ArrayList;
                     case "Farmhouse":
 
                         connector.executeStatement("" +
-                                "SELECT Size, WorkerAmount FROM JansEmpire_Farmhouse WHERE Level = '" + result.getData()[i][1] + "';");
+                                "SELECT Size, WorkerAmount FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[i][1] + "' AND Type = '" + result.getData()[i][0] + "';");
 
                         buildingData = connector.getCurrentQueryResult();
                         position = result.getData()[i][2].split("-");
@@ -110,7 +116,7 @@ import java.util.ArrayList;
                     case "Stonemason":
 
                         connector.executeStatement("" +
-                                "SELECT Size, WorkerAmount FROM JansEmpire_Stonemason WHERE Level = '" + result.getData()[i][1] + "';");
+                                "SELECT Size, WorkerAmount FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[i][1] + "' AND Type = '" + result.getData()[i][0] + "';");
 
                         buildingData = connector.getCurrentQueryResult();
                         position = result.getData()[i][2].split("-");
@@ -122,7 +128,7 @@ import java.util.ArrayList;
                     case "House":
 
                         connector.executeStatement("" +
-                                "SELECT Size FROM JansEmpire_House WHERE Level = '" + result.getData()[i][1] + "';");
+                                "SELECT Size FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[i][1] + "' AND Type = '" + result.getData()[i][0] + "';");
 
                         buildingData = connector.getCurrentQueryResult();
                         position = result.getData()[i][2].split("-");
@@ -134,7 +140,7 @@ import java.util.ArrayList;
                     case "Castle":
 
                         connector.executeStatement("" +
-                                "SELECT Size FROM JansEmpire_Castle WHERE Level = '" + result.getData()[i][1] + "';");
+                                "SELECT Size FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[i][1] + "' AND Type = '" + result.getData()[i][0] + "';");
 
                         buildingData = connector.getCurrentQueryResult();
                         position = result.getData()[i][2].split("-");
@@ -146,7 +152,7 @@ import java.util.ArrayList;
                     case "Kaserne":
 
                         connector.executeStatement("" +
-                                "SELECT Size FROM JansEmpire_Kaserne WHERE Level = '" + result.getData()[i][1] + "';");
+                                "SELECT Size FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[i][1] + "' AND Type = '" + result.getData()[i][0] + "';");
 
                         buildingData = connector.getCurrentQueryResult();
                         position = result.getData()[i][2].split("-");
@@ -158,7 +164,7 @@ import java.util.ArrayList;
                     case "GuardHouse":
 
                         connector.executeStatement("" +
-                                "SELECT Size FROM JansEmpire_GuardHouse WHERE Level = '" + result.getData()[i][1] + "';");
+                                "SELECT Size FROM JansEmpire_StaticBuildings WHERE Level = '" + result.getData()[i][1] + "' AND Type = '" + result.getData()[i][0] + "';");
 
                         buildingData = connector.getCurrentQueryResult();
                         position = result.getData()[i][2].split("-");
@@ -179,22 +185,22 @@ import java.util.ArrayList;
 
             if(connector.getCurrentQueryResult().getData()[0][0].equalsIgnoreCase("House")) {
 
-                connector.executeStatement("SELECT Livingroom FROM JansEmpire_House WHERE Level ='" + connector.getCurrentQueryResult().getData()[0][1] + "';");
-                player.payGoods(0, 0, 0, 0, Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]));
+                connector.executeStatement("SELECT Livingroom FROM JansEmpire_StaticBuildings WHERE Level ='" + connector.getCurrentQueryResult().getData()[0][1] + "' AND Type = 'House';");
+                player.payResources(0, 0, 0, 0, Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]));
             }
 
             else if(connector.getCurrentQueryResult().getData()[0][0].equalsIgnoreCase("Warehouse")) {
 
-                connector.executeStatement("SELECT Storage FROM JansEmpire_Warehouse WHERE Level = '" + connector.getCurrentQueryResult().getData()[0][1] + "';");
+                connector.executeStatement("SELECT Storage FROM JansEmpire_StaticBuildings WHERE Level = '" + connector.getCurrentQueryResult().getData()[0][1] + "' AND Type = 'Warehouse';");
                 player.addStorage(- Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]));
             }
 
             if(building.isNeedWorker()) {
 
                 connector.executeStatement("" +
-                        "SELECT WorkerAmount FROM " + building.getDatabase() + " WHERE Level = '" + level.getData()[0][1] + "';");
+                        "SELECT WorkerAmount FROM JansEmpire_StaticBuildings WHERE Level = '" + level.getData()[0][1] + "' AND Type = '" + connector.getCurrentQueryResult().getData()[0][0] + "';");
 
-                player.addGoods(0, 0, 0, 0, Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]));
+                player.deposit(0, 0, 0, 0, Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]));
             }
 
             connector.executeStatement("DELETE FROM JansEmpire_Buildings WHERE Mail = '" + player.getMail() + "' AND Position = '" + building.getPosition() + "';");
@@ -270,16 +276,96 @@ import java.util.ArrayList;
                     draw.drawLine(fieldX + (fieldSquareSize * amountOfFields), fieldY, fieldX + (fieldSquareSize * amountOfFields), fieldY + (fieldSquareSize * amountOfFields));
             } else {
 
-                for (int row = 0; row < fields.length; row++) {
-                    for (int col = 0; col < fields[0].length; col++) {
+                for (int col = 0; col < fields.length; col++) {
+                    for (int row = 0; row < fields[0].length; row++) {
 
-                        draw.drawImage(grassTile.getSubImage(row % 4, col % 4), fieldX + (row * fieldSquareSize), fieldY + (col * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                        draw.drawImage(waterTile.getSubImage(1, 1), fieldX + (col * fieldSquareSize), fieldY + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
                     }
                 }
-
-                draw.setColour(Color.GRAY.brighter());
-                draw.drawRec(fieldX, fieldY, amountOfFields * fieldSquareSize, amountOfFields * fieldSquareSize);
             }
+
+                //Bottom
+            for (int col = 0; col < fields.length; col++) {
+                for (int row = 0; row < 10; row++) {
+
+                    if(row == 0) {
+
+                        draw.drawImage(waterTile.getSubImage(1, 2),fieldX + (col * fieldSquareSize), fieldY + (fields[0].length * fieldSquareSize) + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    } else if(row == 1) {
+
+                        draw.drawImage(waterTile.getSubImage(1, 3),fieldX + (col * fieldSquareSize), fieldY + (fields[0].length * fieldSquareSize) + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    } else {
+
+                        draw.drawImage(waterTile.getSubImage(3, 1),fieldX + (col * fieldSquareSize), fieldY + (fields[0].length * fieldSquareSize) + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    }
+                }
+            }
+
+                //Left
+            for (int col = 0; col < 10; col++) {
+                for (int row = 0; row < fields[0].length + 10; row++) {
+
+                    if(col == 0 && row < fields[0].length) {
+
+                        draw.drawImage(waterTile.getSubImage(2, 1),fieldX + (fields.length * fieldSquareSize) + (col * fieldSquareSize), fieldY + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    } else if(col == 0 && row == fields[0].length) {
+
+                        draw.drawImage(waterTile.getSubImage(2, 2),fieldX + (fields.length * fieldSquareSize) + (col * fieldSquareSize), fieldY + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    } else if(col == 0 && row == fields[0].length + 1) {
+
+                        draw.drawImage(waterTile.getSubImage(2, 3),fieldX + (fields.length * fieldSquareSize) + (col * fieldSquareSize), fieldY + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    } else {
+
+                        draw.drawImage(waterTile.getSubImage(3, 1),fieldX + (fields.length * fieldSquareSize) + (col * fieldSquareSize), fieldY + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    }
+                }
+            }
+
+            for(int col = 0; col < 6; col++) {
+                for (int row = 0; row < 5; row++) {
+
+                    draw.drawImage(waterTile.getSubImage(3, 1),col * fieldSquareSize, row * fieldSquareSize, fieldSquareSize, fieldSquareSize);
+                }
+            }
+
+            for (int col = 0; col < fields.length + 10; col++) {
+                for (int row = 0; row < 10; row++) {
+
+                    if(row == 0 && col < fields.length) {
+
+                        draw.drawImage(waterTile.getSubImage(1, 0),fieldX + (col * fieldSquareSize), fieldY - (row * fieldSquareSize) - fieldSquareSize, fieldSquareSize, fieldSquareSize);
+                    } else if(row == 0 && col == fields.length) {
+
+                        draw.drawImage(waterTile.getSubImage(2, 0),fieldX + (col * fieldSquareSize), fieldY - (row * fieldSquareSize) - fieldSquareSize, fieldSquareSize, fieldSquareSize);
+                    }else {
+
+                            draw.drawImage(waterTile.getSubImage(3, 1),fieldX + (col * fieldSquareSize), fieldY - (row * fieldSquareSize) - fieldSquareSize, fieldSquareSize, fieldSquareSize);
+                    }
+                }
+            }
+
+                //Right
+            for (int col = 0; col < 10; col++) {
+                for (int row = 0; row < fields[0].length + 10; row++) {
+
+                    if(col == 0 && row < fields[0].length) {
+
+                        draw.drawImage(waterTile.getSubImage(0, 1),fieldX - (col * fieldSquareSize) - fieldSquareSize, fieldY + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    } else if(col == 0 && row == fields[0].length) {
+
+                        draw.drawImage(waterTile.getSubImage(0, 2),fieldX - (col * fieldSquareSize) - fieldSquareSize, fieldY + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    } else if(col == 0 && row == fields[0].length + 1) {
+
+                        draw.drawImage(waterTile.getSubImage(0, 3),fieldX - (col * fieldSquareSize) - fieldSquareSize, fieldY + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    } else {
+
+                        draw.drawImage(waterTile.getSubImage(3, 1),fieldX - (col * fieldSquareSize) - fieldSquareSize, fieldY + (row * fieldSquareSize), fieldSquareSize, fieldSquareSize);
+                    }
+                }
+            }
+
+            draw.drawImage(boat, 75, 905);
+            draw.drawImage(steg, 295, 805);
         }
 
         public void simulateBuild(int fromX, int fromY, int width, int height) {
@@ -323,7 +409,7 @@ import java.util.ArrayList;
 
         public void build(Building building, int fromX, int fromY, int width, int height, int woodCost, int stoneCost, int wheatCost, int coinCost, int worker) {
 
-            player.payGoods(woodCost, stoneCost, wheatCost, coinCost, worker);
+            player.payResources(woodCost, stoneCost, wheatCost, coinCost, worker);
             this.build(building, fromX, fromY, width, height);
         }
 

@@ -10,7 +10,6 @@ import gamePackage.Game.GameField;
                 //Attribute
 
                 //Referenzen
-            private String database;
             private DatabaseConnector connector;
 
         public Castle(DatabaseConnector connector, Display display, GameField gameField, int level, int posX, int posY, int width, int height) {
@@ -18,10 +17,10 @@ import gamePackage.Game.GameField;
             super(connector, display, gameField, level, posX, posY, width, height);
 
             this.connector = connector;
-            this.database = "JansEmpire_Castle";
+            this.type = "Castle";
             loadImage();
 
-            upgradable = generateUpgradeCost(database, false, level);
+            upgradable = generateUpgradeCost(type, false, level);
         }
 
         @Override

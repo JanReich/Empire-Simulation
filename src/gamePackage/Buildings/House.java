@@ -6,7 +6,6 @@ import engine.toolBox.DrawHelper;
 import engine.toolBox.ImageHelper;
 import gamePackage.Game.GameField;
 
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
@@ -23,10 +22,10 @@ import java.awt.image.BufferedImage;
             super(connector, display, gameField, level, posX, posY, width, height);
 
             this.connector = connector;
-            this.database = "JansEmpire_House";
+            this.type = "House";
             loadImage();
 
-            upgradable = generateUpgradeCost(database, false, level);
+            upgradable = generateUpgradeCost(type, false, level);
             overlay = ImageHelper.getImage("res/images/Gui/Overlay.png");
         }
 

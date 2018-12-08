@@ -36,11 +36,6 @@ import java.awt.event.MouseEvent;
                     "SELECT JansEmpire_Users.Mail, Username, Level, XP, LastRefresh FROM JansEmpire_Users INNER JOIN JansEmpire_PlayerData ON JansEmpire_Users.Mail = JansEmpire_PlayerData.Mail");
 
             users = connector.getCurrentQueryResult();
-
-            for (int i = 0; i < users.getColumnCount(); i++) {
-
-                System.out.println(users.getColumnNames()[i]);
-            }
         }
 
         @Override
@@ -80,12 +75,24 @@ import java.awt.event.MouseEvent;
         }
 
         @Override
-        public void mouseReleased(MouseEvent event) {
+        public void mouseReleased(MouseEvent e) {
 
+            for (int i = 0; i < users.getRowCount(); i++) {
+
+                if(e.getX() > 920 && e.getX() < 935 && e.getY() > 220 + 50 * i && e.getY() < 235 + 50 * i) {
+
+                    connector.executeStatement("DELETE FROM JansEmpire_Buildings WHERE Mail = '" + users.getData()[i][0] + "';");
+                    connector.executeStatement("DELETE FROM JansEmpire_PlayerData WHERE Mail = '" + users.getData()[i][0] + "';");
+                    connector.executeStatement("DELETE FROM JansEmpire_UserQuestList WHERE Mail = '" + users.getData()[i][0] + "';");
+                    connector.executeStatement("DELETE FROM JansEmpire_Users WHERE Mail = '" + users.getData()[i][0] + "';");
+
+                    refresh();
+                }
+            }
         }
 
         @Override
-        public void mouseMoved(MouseEvent event) {
+        public void mouseMoved(MouseEvent e) {
 
         }
 

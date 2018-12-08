@@ -14,7 +14,9 @@ import engine.abitur.datenbanken.mysql.QueryResult;
 
             private int xp;
             private int level;
+            private int nextLevelXP;
             private int storageAmount;
+            private int currentProgress;
 
             private int woodPerHour;
             private int stonePerHour;
@@ -50,17 +52,79 @@ import engine.abitur.datenbanken.mysql.QueryResult;
 
             connector.executeStatement("SELECT Username FROM JansEmpire_Users WHERE Mail = '" + mail + "';");
             username = connector.getCurrentQueryResult().getData()[0][0];
+
+            connector.executeStatement("SELECT MAX(Level) FROM JansEmpire_Level");
+            int maxLevel = Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]);
+
+            if(maxLevel > level) {
+
+                connector.executeStatement("SELECT xp FROM JansEmpire_Level WHERE Level = '" + (level + 1) + "'");
+                nextLevelXP = Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]);
+            } else nextLevelXP = -1;
+
+            connector.executeStatement("SELECT xp FROM JansEmpire_Level WHERE Level = '" + (level) + "'");
+            currentProgress = Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]);
         }
 
-        public void setStorage(int storage) {
+        public void deposit(int wood, int stone, int wheat, int coins, int worker) {
 
-            storageAmount = storage;
+            this.wood += wood;
+            if(this.wood > storageAmount) this.wood = storageAmount;
+
+            this.stone += stone;
+            if(this.stone > storageAmount) this.stone = storageAmount;
+
+            this.wheat += wheat;
+            if(this.wheat > storageAmount) this.wheat = storageAmount;
+
+            this.coins += coins;
+            this.worker += worker;
 
             connector.executeStatement("" +
                     "UPDATE JansEmpire_PlayerData SET " +
-                    "StorageAmount = '" + storageAmount + "'" +
-                    "WHERE Mail = '" + getMail() + "'");
+                    "Wood = '" + this.wood +  "'," +
+                    "Stone = '" + this.stone + "'," +
+                    "Wheat = '" + this.wheat + "'," +
+                    "Coins = '" + this.coins + "'," +
+                    "Population = '" + this.worker + "'" +
+                    "WHERE Mail = '" + mail + "';");
         }
+
+        public boolean payResources(int wood, int stone, int wheat, int coins, int worker) {
+
+            if(checkGoods(wood, stone, wheat, coins, worker)) {
+
+                this.wood -= wood;
+                this.stone -= stone;
+                this.wheat -= wheat;
+                this.coins -= coins;
+                this.worker -= worker;
+
+                //Update in mySQL
+                connector.executeStatement("" +
+                        "UPDATE JansEmpire_PlayerData SET " +
+                        "Wood = '" + this.wood +  "'," +
+                        "Stone = '" + this.stone + "'," +
+                        "Wheat = '" + this.wheat + "'," +
+                        "Coins = '" + this.coins + "'," +
+                        "Population = '" + this.worker + "'" +
+                        "WHERE Mail = '" + mail + "';");
+
+                return true;
+            } else return false;
+        }
+
+        public boolean checkGoods(int wood, int stone, int wheat, int coins, int worker) {
+
+            if(wood <= this.wood && stone <= this.stone && wheat <= this.wheat && coins <= this.coins && worker <= this.worker) return true;
+            return false;
+        }
+        
+        
+        
+        
+        
+        
 
         public void addStorage(int storage) {
 
@@ -116,72 +180,6 @@ import engine.abitur.datenbanken.mysql.QueryResult;
             this.storageAmount = storageAmount;
         }
 
-        public boolean checkGoods(int wood, int stone, int wheat, int coins, int worker) {
-
-            if(wood <= this.wood && stone <= this.stone && wheat <= this.wheat && coins <= this.coins && worker <= this.worker) return true;
-            return false;
-        }
-
-        public boolean payGoods(int wood, int stone, int wheat, int coins, int worker) {
-
-            if(checkGoods(wood, stone, wheat, coins, worker)) {
-
-                    this.wood -= wood;
-                    this.stone -= stone;
-                    this.wheat -= wheat;
-                    this.coins -= coins;
-                    this.worker -= worker;
-
-                        //Update in mySQL
-                    connector.executeStatement("" +
-                            "UPDATE JansEmpire_PlayerData SET " +
-                            "Wood = '" + this.wood +  "'," +
-                            "Stone = '" + this.stone + "'," +
-                            "Wheat = '" + this.wheat + "'," +
-                            "Coins = '" + this.coins + "'," +
-                            "Population = '" + this.worker + "'" +
-                            "WHERE Mail = '" + mail + "';");
-
-                return true;
-            } else return false;
-        }
-
-        public int getNextLevelXP() {
-
-            connector.executeStatement("SELECT MAX(Level) FROM JansEmpire_Level");
-            int maxLevel = Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]);
-
-            if(maxLevel > level) {
-
-                connector.executeStatement("SELECT xp FROM JansEmpire_Level WHERE Level = '" + (level + 1) + "'");
-                return Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]);
-            } else return -1;
-        }
-
-        public void addGoods(int wood, int stone, int wheat, int coins, int worker) {
-
-            this.wood += wood;
-            if(this.wood > storageAmount) this.wood = storageAmount;
-
-            this.stone += stone;
-            if(this.stone > storageAmount) this.stone = storageAmount;
-
-            this.wheat += wheat;
-            if(this.wheat > storageAmount) this.wheat = storageAmount;
-
-            this.coins += coins;
-            this.worker += worker;
-
-            connector.executeStatement("" +
-                    "UPDATE JansEmpire_PlayerData SET " +
-                    "Wood = '" + this.wood +  "'," +
-                    "Stone = '" + this.stone + "'," +
-                    "Wheat = '" + this.wheat + "'," +
-                    "Coins = '" + this.coins + "'," +
-                    "Population = '" + this.worker + "'" +
-                    "WHERE Mail = '" + mail + "';");
-        }
-
         public void addXP(int xp) {
 
             this.xp += xp;
@@ -207,12 +205,15 @@ import engine.abitur.datenbanken.mysql.QueryResult;
                             "UPDATE JansEmpire_PlayerData SET Level = '" + level + "' WHERE Mail = '" + mail +"';");
                 }
             }
-        }
 
-        public int getCurrentProgress() {
+            if(maxLevel > level) {
+
+                connector.executeStatement("SELECT xp FROM JansEmpire_Level WHERE Level = '" + (level + 1) + "'");
+                nextLevelXP = Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]);
+            } nextLevelXP = -1;
 
             connector.executeStatement("SELECT xp FROM JansEmpire_Level WHERE Level = '" + (level) + "'");
-            return Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]);
+            currentProgress = Integer.parseInt(connector.getCurrentQueryResult().getData()[0][0]);
         }
 
 
@@ -266,6 +267,14 @@ import engine.abitur.datenbanken.mysql.QueryResult;
         public int getStorageAmount() {
 
             return storageAmount;
+        }
+
+        public int getNextLevelXP() {
+            return nextLevelXP;
+        }
+
+        public int getCurrentProgress() {
+            return currentProgress;
         }
 
         public int getWoodPerHour() {
