@@ -239,10 +239,13 @@ import java.awt.image.BufferedImage;
 
             else if(e.getX() >= gameField.getFieldX() + (posX * gameField.getFieldSquareSize()) && e.getX() <= gameField.getFieldX() + (posX * gameField.getFieldSquareSize()) + (width * gameField.getFieldSquareSize()) && e.getY() >= gameField.getFieldY() + (posY * gameField.getFieldSquareSize()) && e.getY() <= gameField.getFieldY() + (posY * gameField.getFieldSquareSize()) + (height * gameField.getFieldSquareSize()) && overlay == null && !gameField.getController().getQuestbook().isActive()) {
 
-                display.getActivePanel().removeObjectFromPanel(overlay);
-                overlay = null;
-                overlay = new BuildingOverlay(this, getPosition(), gameField.getFieldX() + (posX * gameField.getFieldSquareSize()), gameField.getFieldY() + (posY * gameField.getFieldSquareSize()), width * gameField.getFieldSquareSize(), height * gameField.getFieldSquareSize());
-                display.getActivePanel().drawObjectOnPanel(overlay, 10);
+                if(!gameField.isMenuActive()) {
+
+                    display.getActivePanel().removeObjectFromPanel(overlay);
+                    overlay = null;
+                    overlay = new BuildingOverlay(this,gameField.getFieldX() + (posX * gameField.getFieldSquareSize()), gameField.getFieldY() + (posY * gameField.getFieldSquareSize()), width * gameField.getFieldSquareSize(), height * gameField.getFieldSquareSize());
+                    display.getActivePanel().drawObjectOnPanel(overlay, 50);
+                }
             } else {
 
                 display.getActivePanel().removeObjectFromPanel(overlay);
@@ -348,5 +351,9 @@ import java.awt.image.BufferedImage;
         public boolean isInside(MouseEvent e, int x, int y, int width, int height) {
 
             if(e.getX() > x && e.getX() < x + width && e.getY() > y && e.getY() < y + height) return true; return false;
+        }
+        public BuildingOverlay getBuildingOverlay() {
+
+            return overlay;
         }
     }

@@ -37,6 +37,8 @@ import java.util.ArrayList;
             private BufferedImage boat;
             private BufferedImage steg;
 
+            private PathManagement pathManagement;
+
         public GameField(DatabaseConnector connector, Refresh refresh, Display display, Player player, GameController controller) {
 
             this.player = player;
@@ -54,6 +56,7 @@ import java.util.ArrayList;
                 }
             }
 
+            pathManagement = new PathManagement(display,this);
             loadBuildings();
 
             boat = ImageHelper.getImage("res/images/Environment/Boat.png");
@@ -61,8 +64,21 @@ import java.util.ArrayList;
             waterTile = new SpriteSheet(ImageHelper.getImage("res/images/Environment/waterTile.png"), 4, 4, true);
         }
 
+        public boolean isMenuActive() {
+
+            boolean temp = true;
+
+            for(Building building : buildings) {
+
+                if(building.getBuildingOverlay() != null) temp = false;
+            }
+            return !temp;
+        }
+
         private void loadBuildings() {
 
+            display.getActivePanel().removeObjectFromPanel(pathManagement);
+            display.getActivePanel().drawObjectOnPanel(pathManagement, 40);
             connector.executeStatement("" +
                     "SELECT Type, Level, Position FROM JansEmpire_Buildings WHERE Mail = '" + player.getMail() + "';");
 
@@ -173,6 +189,11 @@ import java.util.ArrayList;
                         GuardHouse guardHouse = new GuardHouse(connector, display,this, Integer.parseInt(result.getData()[i][1]), Integer.parseInt(position[0]), Integer.parseInt(position[1]), Integer.parseInt(length[0]), Integer.parseInt(length[1]));
                         build(guardHouse, Integer.parseInt(position[0]), Integer.parseInt(position[1]), Integer.parseInt(length[0]), Integer.parseInt(length[1]));
                         break;
+                    case "Path":
+
+                        position = result.getData()[i][2].split("-");
+                        pathManagement.addPath(Integer.parseInt(position[0]), Integer.parseInt(position[1]));
+                        break;
                 }
             }
 
@@ -211,6 +232,12 @@ import java.util.ArrayList;
             display.getActivePanel().removeObjectFromPanel(overlay);
             display.getActivePanel().removeObjectFromPanel(building);
             getController().refreshQuests();
+        }
+
+        public void destroyPath(String position, int x, int y) {
+
+            connector.executeStatement("DELETE FROM JansEmpire_Buildings WHERE Mail = '" + player.getMail() + "' AND Position = '" + position + "';");
+            removeFields(x, y, 1, 1);
         }
 
         public void removeFields(int startX, int startY, int width, int height) {
@@ -438,5 +465,14 @@ import java.util.ArrayList;
         public GameController getController() {
 
             return controller;
+        }
+
+        public int getAmountOfFields() {
+
+            return amountOfFields;
+        }
+
+        public PathManagement getPathManagement() {
+            return pathManagement;
         }
     }

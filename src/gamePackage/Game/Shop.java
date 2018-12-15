@@ -97,7 +97,7 @@ import java.util.ArrayList;
             display.getActivePanel().drawObjectOnPanel(item, 28);
             items.add(item);
 
-            item = new ShopItem(this, connector, gameField, player, "images/Gui/Shop/ShopItemStreet", "images/Buildings/PathTiles", "Path", "2x2", 0, 1, 0);
+            item = new ShopItem(this, connector, gameField, player, "Path/PathW", "Path/PathW", "Path", "1x1", 0, 1, 0);
             display.getActivePanel().drawObjectOnPanel(item, 28);
             items.add(item);
         }
@@ -139,13 +139,13 @@ import java.util.ArrayList;
 
             if(e.getX() > 740 && e.getX() < 760 && e.getY() > 905 && e.getY() < 940 && active) {
 
-                shopPage++;
+                shopPage += 1;
                 for (ShopItem item : items)
                     item.setShopPage(shopPage);
             }
             else if(e.getX() > 235 && e.getX() < 250 && e.getY() > 900 && e.getY() < 940 && active) {
 
-                shopPage--;
+                shopPage -= 1;
                 for (ShopItem item : items)
                     item.setShopPage(shopPage);
             }
@@ -159,6 +159,13 @@ import java.util.ArrayList;
         @Override
         public void mouseMoved(MouseEvent event) {
 
+        }
+
+        public void setShopPage(int page) {
+
+            shopPage = page;
+            for (ShopItem item : items)
+                item.setShopPage(page);
         }
 
             //--------------- GETTER AND SETTER ---------------\\
@@ -314,6 +321,7 @@ import java.util.ArrayList;
 
                     if (buildMode) {
 
+                        shop.setShopPage(0);
                         if (!gameField.getField(e.getX(), e.getY()).equalsIgnoreCase("error")) {
 
                             String[] field = gameField.getField(e.getX(), e.getY()).split(":");
@@ -359,6 +367,12 @@ import java.util.ArrayList;
                                         gameField.build(guardHouse, Integer.parseInt(field[0]), Integer.parseInt(field[1]), Integer.parseInt(size[0]), Integer.parseInt(size[1]), woodCost, stoneCost, wheatCost, coinCost, worker);
                                         controller.setBuildingmode(false);
                                         break;
+
+
+                                        //Path
+                                    case "Path":
+                                        gameField.getPathManagement().build(Integer.parseInt(field[0]), Integer.parseInt(field[1]), woodCost, stoneCost, wheatCost, coinCost);
+                                        break;
                                 }
 
                                 active = false;
@@ -381,7 +395,6 @@ import java.util.ArrayList;
                         }
                     }
                 }
-
             }
 
             @Override

@@ -195,7 +195,7 @@ import java.util.TimerTask;
 
             connector.executeStatement("" +
                     "SELECT Level, XP, StorageAmount, Wood, Stone, Wheat, Coins, Population FROM JansEmpire_PlayerData WHERE Mail = '" + player.getMail() + "';");
-
+            System.out.println(connector.getErrorMessage());
             QueryResult result = connector.getCurrentQueryResult();
             int level = Integer.parseInt(result.getData()[0][0]);
             int xp = Integer.parseInt(result.getData()[0][1]);
