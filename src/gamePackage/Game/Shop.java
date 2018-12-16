@@ -143,6 +143,7 @@ import java.util.ArrayList;
                 for (ShopItem item : items)
                     item.setShopPage(shopPage);
             }
+
             else if(e.getX() > 235 && e.getX() < 250 && e.getY() > 900 && e.getY() < 940 && active) {
 
                 shopPage -= 1;
@@ -313,7 +314,7 @@ import java.util.ArrayList;
 
                 if(shopState == state && !inActive && !gameField.getController().getQuestbook().isActive() && active && page == shopPage) {
 
-                    if (e.getX() > x + (88 * index) && e.getX() < x + (88 * (index + 1)) && e.getY() > y && e.getY() < y + 128 && !buildMode) {
+                    if (e.getX() > x + (88 * index) && e.getX() < x + (88 * (index + 1)) && e.getY() > y && e.getY() < y + 128 && !buildMode && page == shopPage) {
 
                         buildMode = true;
                         reset(this);
